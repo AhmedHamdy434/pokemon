@@ -1,0 +1,305 @@
+body {
+  background-color: white;
+}
+
+/* start all pokemon page  */
+.all {
+  text-align: center;
+  position: relative;
+}
+/* ************************************************* */
+/* ************************************************* */
+/* [1] heading 4 */
+.all h4 {
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 28.06px;
+  letter-spacing: 3px;
+  margin: 29px 33px 0;
+  span {
+    font-weight: 700;
+  }
+}
+/* [1] heading 4  Tablet*/
+@media (min-width: 768px) {
+  .all h4 {
+    font-size: 35px;
+    line-height: 40.92px;
+  }
+}
+/* ************************************************* */
+/* ************************************************* */
+/* [2] input  */
+.all input[type="text"] {
+  padding-left: 19px;
+  margin: 29px 34px 16px 34px;
+  display: block;
+  border-radius: 40px;
+  border: none;
+  background: rgba(242, 242, 242, 1);
+  width: calc(100% - 68px);
+  height: 31px;
+  box-shadow: 4px 4px 4px 0px rgba(33, 33, 33, 0.1);
+
+  &::placeholder {
+    font-family: Source Sans Pro;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 15.08px;
+    color: rgba(33, 33, 33, 0.8);
+  }
+  &:focus {
+    outline: none;
+  }
+}
+/* [2] input Tabetl*/
+@media (min-width: 768px) {
+  .all input[type="text"] {
+    height: 36px;
+    box-shadow: 2px 2px 2px 0px rgba(33, 33, 33, 0.1);
+    &::placeholder {
+      font-size: 16px;
+      line-height: 20.11px;
+    }
+  }
+}
+/* ************************************************* */
+/* ************************************************* */
+/* [3] filter  */
+.all .filter {
+  background-color: rgba(242, 242, 242, 1);
+  box-shadow: 2px 2px 2px 0px rgba(33, 33, 33, 0.1);
+  border-radius: 8px;
+  width: fit-content;
+  padding: 3px 36px 2px 15px;
+  margin-left: 34px;
+  margin-bottom: 29px;
+  user-select: none;
+}
+@media (min-width: 768px) {
+  .all .filter {
+    display: none;
+  }
+}
+/* ************************************************* */
+/* ************************************************* */
+/* [4] sort  */
+.all .sort {
+  display: none;
+}
+/* [4] sort at Tablet */
+
+@media (min-width: 768px) {
+  .all .sort {
+    margin-left: 34px;
+    display: flex;
+    gap: 63px;
+  }
+  .all .sort .type {
+    position: relative;
+    width: 135px;
+    margin-bottom: 81px;
+  }
+  .all .sort .label {
+    width: 135px;
+    height: 21px;
+    font-size: 16px;
+    line-height: 20.11px;
+    letter-spacing: 0%;
+    text-align: center;
+    box-shadow: 2px 2px 2px 0px rgba(33, 33, 33, 0.1);
+    background-color: rgba(242, 242, 242, 1);
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    + .type-list {
+      display: none;
+    }
+    &::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 6px;
+      width: 3.6px;
+      height: 1px;
+      background-color: black;
+      transform: rotate(-33.7deg);
+      transform-origin: 0% 100%;
+    }
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 9.6px;
+      width: 3.6px;
+      height: 1px;
+      background-color: black;
+      transform: rotate(33.7deg);
+      transform-origin: 100% 100%;
+    }
+  }
+  .all .type .label.clicked + .type-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 0;
+    width: 100%;
+    position: absolute;
+    top: calc(100% + 8px);
+    height: 131px;
+    border-radius: 8px;
+    background: rgba(242, 242, 242, 1);
+    box-shadow: 4px 4px 8px 0px rgba(1, 28, 64, 0.2);
+    z-index: 3;
+    overflow-y: scroll;
+    .typer {
+      width: 100%;
+      padding-left: 30px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+}
+/* ************************************************* */
+/* ************************************************* */
+/* [5]  pokemons  */
+.all .pokemons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 340px));
+  row-gap: 24px;
+  column-gap: 18px;
+  justify-content: center;
+  & > span {
+    display: none;
+  }
+}
+.all .pokemons.not-found {
+  display: block;
+  & > span {
+    display: block;
+    text-align: center;
+  }
+}
+
+/* Card  */
+.all .pokemons .card {
+  box-shadow: 4px 4px 16px 0px rgba(1, 28, 64, 0.2);
+  border-radius: 8px;
+  background: linear-gradient(270deg, #b33327 0.15%, #d93e30 100%);
+  position: relative;
+  display: flex;
+  align-items: center;
+  &::before {
+    content: "";
+    background-color: rgba(246, 247, 249, 1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 33.3%;
+    height: 100%;
+  }
+  &.removed {
+    display: none;
+  }
+}
+
+/* card info */
+.all .card .info {
+  padding-left: 24px;
+  z-index: 2;
+  text-align: left;
+  width: 48%;
+  .name {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 21.04px;
+    margin-top: 6px;
+  }
+  .states {
+    display: flex;
+    margin-top: 26px;
+    gap: 9px;
+    .state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 11px;
+      .power {
+        font-size: 15px;
+        width: 36px;
+        height: 36px;
+        margin-bottom: 6px;
+        border: 3px solid black;
+        border-radius: 50%;
+        line-height: 17.54px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .power-type {
+        font-size: 12px;
+        line-height: 14.03px;
+      }
+    }
+  }
+}
+/* spells  */
+.spells {
+  display: flex;
+  gap: 12px;
+  span {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 14.06px;
+    color: var(--dark-color);
+    width: 57.4px;
+    height: 16.26px;
+    background: rgba(115, 214, 119, 1);
+    box-shadow: 0px -2px 0px 0px rgba(0, 0, 0, 0.18) inset;
+    border-radius: 11px;
+    text-align: center;
+    &:last-child {
+      background-color: rgba(7, 214, 242, 1);
+    }
+  }
+}
+
+/* card image  */
+.all .card .image-poke {
+  width: 52%;
+  img {
+    width: 100%;
+  }
+}
+/* ************************************************* */
+/* ************************************************* */
+/* [6] bullets  */
+.all .bullets {
+  width: fit-content;
+  text-align: center;
+  display: flex;
+  margin: 51px auto 64px;
+  justify-content: space-between;
+  gap: 24px;
+  span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(33, 33, 33, 0.5);
+  }
+}
+/* bullets on Web  */
+@media (min-width: 992px) {
+  .all .bullets {
+    margin: 31px auto;
+  }
+}
+
+/* ************************************************* */
+/* ************************************************* */

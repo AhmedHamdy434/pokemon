@@ -1,0 +1,56 @@
+/* Start Variables */
+:root {
+  --third-color: #f5db13;
+  --primary-color: #f2b807;
+  --second-color: ##f28f16;
+  --danger-color: #d93e30;
+  --white-color: #f6f7f9;
+  --white-light: rgba(253, 253, 253, 1);
+  --dark-color: rgb(33, 33, 33);
+  --yellow-gradient: linear-gradient(180deg, #f5db13 0%, #f2b807 100%);
+}
+/* End Variables */
+
+/* Start Global Rules */
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  font-family: "Karla", serif;
+}
+ul {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+}
+.container {
+  padding-left: 25px;
+  padding-right: 25px;
+  margin-left: auto;
+  margin-right: auto;
+}
+/* Small */
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+  }
+}
+/* Medium */
+@media (min-width: 992px) {
+  .container {
+    width: 970px;
+  }
+}
+/* Large */
+@media (min-width: 1200px) {
+  .container {
+    width: 1125px;
+  }
+}
+/* End Global Rules */
