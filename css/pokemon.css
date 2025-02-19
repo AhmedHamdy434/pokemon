@@ -190,7 +190,6 @@ body {
 .all .pokemons .card {
   box-shadow: 4px 4px 16px 0px rgba(1, 28, 64, 0.2);
   border-radius: 8px;
-  background: linear-gradient(270deg, #b33327 0.15%, #d93e30 100%);
   position: relative;
   display: flex;
   align-items: center;

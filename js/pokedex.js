@@ -19,6 +19,7 @@ function typeUnlist() {
 }
 // *******************************************************
 // *******************************************************
+console.log(colorObject);
 
 // data on card
 const myPokemon = document.querySelector(".all .pokemons");
@@ -27,8 +28,41 @@ const myShowMonster = document.querySelector(".show-monster");
 
 let pokemonArray = [];
 let filterPokemon = [];
+let myTypeObjectArray = [];
 const maxWeb = 9;
 
+//   create CheckBox
+let myPokemonTyper = document.querySelector(".all .type .type-list");
+fetch("https://pokeapi.co/api/v2/type") // type
+  .then((res) => res.json())
+  .then((res) => {
+    console.log(res);
+    res.results.forEach((type, index) => {
+      createCheckBox(type, index);
+    });
+  });
+//  [4] function createCheckBox
+function createCheckBox(type, index) {
+  let myTypeObject = {
+    name: type.name,
+    url: type.url,
+  };
+  myTypeObjectArray.push(myTypeObject);
+  let myTypeList = document.createElement("div");
+  myTypeList.classList.add("typer");
+  let myCheckBox = document.createElement("input");
+  myCheckBox.setAttribute("type", "checkbox");
+  myCheckBox.setAttribute("id", index);
+  let myLabel = document.createElement("label");
+  myLabel.setAttribute("for", index);
+  myLabel.innerHTML = type.name;
+  myTypeList.appendChild(myCheckBox);
+  myTypeList.appendChild(myLabel);
+  myPokemonTyper.appendChild(myTypeList);
+  myCheckBox.addEventListener("change", ordering);
+}
+
+//**************************************************** */
 // [2] fetch all pokemons on pokemonArray        222222222222222
 fetch("https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0")
   .then((res) => res.json())
@@ -36,23 +70,41 @@ fetch("https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0")
     res.results.forEach((ele) => {
       pokemonArray.push(ele);
     });
-    console.log(pokemonArray);
-    ordering();
+    filterPokemon = pokemonArray;
+    cardCreating(filterPokemon);
   });
 // *******************************************************
 // *******************************************************
-
 // [3] Order pokemons on input change           3333333333333333333
 myInput.addEventListener("input", ordering);
 function ordering() {
+  const myCheckedBoxes = document.querySelectorAll("input[type = checkbox]");
+
   filterPokemon = pokemonArray.filter((pokemon) =>
     pokemon.name.includes(myInput.value)
   );
-  getChoosing(filterPokemon);
+
+  myCheckedBoxes.forEach(async (checkbox, index) => {
+    if (checkbox.checked) {
+      await fetch(myTypeObjectArray[index].url)
+        .then((res) => res.json())
+        .then((res) => {
+          // console.log(res.pokemon);
+          const shared = filterPokemon.filter((obj1) =>
+            res.pokemon.some((obj2) => obj1.name == obj2.pokemon.name)
+          );
+          filterPokemon = shared;
+        });
+    }
+  });
+
+  setTimeout(() => {
+    cardCreating(filterPokemon);
+  }, 1000);
 }
 
-// [4]  getChoosing for creating card             4444444444444444444444
-function getChoosing(filterPokemon) {
+// [4]  creating card             4444444444444444444444
+function cardCreating(filterPokemon) {
   let min = maxWeb;
   if (filterPokemon.length < min) min = filterPokemon.length;
   myPokemon.innerHTML = "";
@@ -61,6 +113,7 @@ function getChoosing(filterPokemon) {
       .then((res) => res.json())
       .then((res) => {
         filterPokemon[i] = {
+          ...filterPokemon[i],
           "data-order": i,
           order: res.order,
           name: res.name,
@@ -73,13 +126,17 @@ function getChoosing(filterPokemon) {
           exp: res.base_experience,
           ability: [
             res.abilities[0].ability.name,
-            res.abilities[1]?.ability.name || "",
+            res.abilities[1]?.ability.name || res.abilities[0].ability.name,
           ],
-          types: [res.types[0].type.name, res.types[1]?.type.name],
+          types: [
+            res.types[0].type.name,
+            res.types[1]?.type.name || res.types[0].type.name,
+          ],
         };
         let myCard = document.createElement("div");
         myCard.classList.add("card");
         myCard.setAttribute("data-order", filterPokemon[i]["data-order"]);
+        myCard.style.background = colorObject[filterPokemon[i].types[0]];
         myCard.innerHTML = `<div class="info">
               <div class="name">${filterPokemon[i].name}</div>
               <div class="states">
@@ -94,10 +151,9 @@ function getChoosing(filterPokemon) {
               </div>
               <div class="spells">
                 <span>${filterPokemon[i].types[0]}</span>
-                <span>${
-                  filterPokemon[i].types[1] || filterPokemon[i].types[0]
-                }</span>
+                <span>${filterPokemon[i].types[1]}</span>
               </div>
+
             </div>
             <div class="image-poke">
               <img src=${filterPokemon[i].image} alt="pokemon" />
@@ -122,6 +178,7 @@ function getChoosing(filterPokemon) {
 
 // [5] function handleShowMonster
 function handleShowMonster(index) {
+  console.log(filterPokemon);
   myShowMonster.innerHTML = `
         <div class="close"></div>
         <div class="image-side">
@@ -191,38 +248,14 @@ function handleShowMonster(index) {
     myScreen.classList.remove("blank");
   });
 }
-//   create CheckBox
-let myPokemonTyper = document.querySelector(".all .type .type-list");
-fetch("https://pokeapi.co/api/v2/type") // type
+
+fetch("https://pokeapi.co/api/v2/type/3") // type
   .then((res) => res.json())
   .then((res) => {
     console.log(res);
-    res.results.forEach((type) => {
-      createCheckBox(type.name);
-    });
   });
-//  [4] function createCheckBox
-function createCheckBox(name) {
-  let myTypeList = document.createElement("div");
-  myTypeList.classList.add("typer");
-  let myCheckBox = document.createElement("input");
-  myCheckBox.setAttribute("type", "checkbox");
-  myCheckBox.setAttribute("id", name);
-  let myLabel = document.createElement("label");
-  myLabel.setAttribute("for", name);
-  myLabel.innerHTML = name;
-  myTypeList.appendChild(myCheckBox);
-  myTypeList.appendChild(myLabel);
-  myPokemonTyper.appendChild(myTypeList);
-}
-
-// fetch("https://pokeapi.co/api/v2/pokemon/1/") // type
-//   .then((res) => res.json())
-//   .then((res) => {
-//     console.log(res);
-//   });
-// fetch("https://pokeapi.co/api/v2/pokemon/11/")
-//   .then((res) => res.json())
-//   .then((res) => {
-//     console.log(res);
-//   });
+fetch("https://pokeapi.co/api/v2/pokemon/11/")
+  .then((res) => res.json())
+  .then((res) => {
+    console.log(res);
+  });
