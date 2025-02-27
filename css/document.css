@@ -1,0 +1,123 @@
+body.document {
+  background: rgba(217, 62, 48, 1);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.document-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 7px;
+    position: relative;
+    h2 {
+      font-weight: 700;
+      font-size: 54vw;
+      line-height: 233.8px;
+      color: rgba(0, 0, 0, 0.5);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    img {
+      width: 72%;
+      position: relative;
+      top: 17px;
+    }
+  }
+  > span {
+    display: block;
+    margin-top: 25px;
+    font-weight: 700;
+    font-size: 25px;
+    line-height: 29.23px;
+    text-align: center;
+    color: white;
+    span {
+      margin-top: 2px;
+      display: block;
+      color: black;
+    }
+  }
+  button {
+    margin-top: 75px;
+    background: #f2cb07;
+    box-shadow: 0px -9px 0px 0px rgba(0, 0, 0, 0.18) inset;
+    border-radius: 11px;
+    border: none;
+    z-index: 3;
+    a {
+      display: block;
+      padding: 7px 43px 13px;
+      width: 100%;
+      border-radius: 11px;
+      font-weight: 700;
+      font-size: 17px;
+      line-height: 19.87px;
+      text-align: center;
+      color: var(--dark-color);
+    }
+  }
+}
+
+/* at tablet  */
+@media (min-width: 768px) {
+  .document-container {
+    .image {
+      h2 {
+        line-height: 469.94px;
+      }
+    }
+    > span {
+      margin-top: 16px;
+      font-size: 45px;
+      line-height: 52.61px;
+      span {
+        margin-top: 16px;
+      }
+    }
+    button {
+      margin-top: 32px;
+      a {
+        padding: 17px 78px 22px;
+        font-size: 23px;
+        line-height: 26.89px;
+      }
+    }
+  }
+}
+@media (min-width: 992px) {
+  .document-container {
+    .image {
+      max-width: 1277px;
+      h2 {
+        font-size: 49vw;
+        line-height: 818.3px;
+      }
+      img {
+        width: 54%;
+      }
+    }
+    > span {
+      margin-top: 2px;
+      display: inline-block;
+      font-size: 48px;
+      line-height: 56.11px;
+      br {
+        display: none;
+      }
+      span {
+        display: inline-block;
+      }
+    }
+    button {
+      margin-top: 62px;
+    }
+  }
+}

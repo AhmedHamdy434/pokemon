@@ -19,29 +19,32 @@ function typeUnlist() {
 }
 // *******************************************************
 // *******************************************************
-console.log(colorObject);
 
 // data on card
 const myPokemon = document.querySelector(".all .pokemons");
 const myInput = document.querySelector("input[type=text]");
 const myShowMonster = document.querySelector(".show-monster");
+let myPokemonTyper = document.querySelector(".all .type .type-list");
 
 let pokemonArray = [];
 let filterPokemon = [];
 let myTypeObjectArray = [];
-const maxWeb = 9;
+const maxWeb = 12;
+// Fetching function
+const fetchData = async (url) => {
+  const response = await fetch(url);
+  const data = await response.json();
+  return data;
+};
 
-//   create CheckBox
-let myPokemonTyper = document.querySelector(".all .type .type-list");
-fetch("https://pokeapi.co/api/v2/type") // type
-  .then((res) => res.json())
-  .then((res) => {
-    console.log(res);
-    res.results.forEach((type, index) => {
-      createCheckBox(type, index);
-    });
+//  [2] create CheckBox [1]
+const checkboxCreating = async () => {
+  const fetchType = await fetchData("https://pokeapi.co/api/v2/type");
+  fetchType.results.forEach((type, index) => {
+    createCheckBox(type, index);
   });
-//  [4] function createCheckBox
+};
+//    create CheckBox [2]
 function createCheckBox(type, index) {
   let myTypeObject = {
     name: type.name,
@@ -53,6 +56,8 @@ function createCheckBox(type, index) {
   let myCheckBox = document.createElement("input");
   myCheckBox.setAttribute("type", "checkbox");
   myCheckBox.setAttribute("id", index);
+  myCheckBox.setAttribute("key", type.name);
+
   let myLabel = document.createElement("label");
   myLabel.setAttribute("for", index);
   myLabel.innerHTML = type.name;
@@ -63,91 +68,93 @@ function createCheckBox(type, index) {
 }
 
 //**************************************************** */
-// [2] fetch all pokemons on pokemonArray        222222222222222
-fetch("https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0")
-  .then((res) => res.json())
-  .then((res) => {
-    res.results.forEach((ele) => {
-      pokemonArray.push(ele);
-    });
-    filterPokemon = pokemonArray;
-    cardCreating(filterPokemon);
-  });
+// [3] fetch all pokemons on pokemonArray        222222222222222
+const fetchAllPokemons = async () => {
+  const pokemonsData = await fetchData(
+    "https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0"
+  );
+  pokemonArray = pokemonsData.results;
+  filterPokemon = pokemonArray;
+  cardCreating(filterPokemon);
+};
+
 // *******************************************************
 // *******************************************************
-// [3] Order pokemons on input change           3333333333333333333
-myInput.addEventListener("input", ordering);
-function ordering() {
+// actions on load
+window.addEventListener("load", async () => {
+  await checkboxCreating();
+  await fetchAllPokemons();
+  myInput.addEventListener("input", ordering);
+});
+
+// [4] Order pokemons on input change           3333333333333333333
+
+const ordering = async () => {
   const myCheckedBoxes = document.querySelectorAll("input[type = checkbox]");
 
   filterPokemon = pokemonArray.filter((pokemon) =>
     pokemon.name.includes(myInput.value)
   );
-
-  myCheckedBoxes.forEach(async (checkbox, index) => {
+  const promises = Array.from(myCheckedBoxes).map(async (checkbox, index) => {
     if (checkbox.checked) {
-      await fetch(myTypeObjectArray[index].url)
-        .then((res) => res.json())
-        .then((res) => {
-          // console.log(res.pokemon);
-          const shared = filterPokemon.filter((obj1) =>
-            res.pokemon.some((obj2) => obj1.name == obj2.pokemon.name)
-          );
-          filterPokemon = shared;
-        });
+      const choosingPokemon = await fetchData(myTypeObjectArray[index].url);
+      const shared = filterPokemon.filter((obj1) =>
+        choosingPokemon.pokemon.some((obj2) => obj1.name == obj2.pokemon.name)
+      );
+      filterPokemon = shared;
     }
   });
+  await Promise.all(promises);
+  cardCreating(filterPokemon);
+};
 
-  setTimeout(() => {
-    cardCreating(filterPokemon);
-  }, 1000);
-}
-
-// [4]  creating card             4444444444444444444444
-function cardCreating(filterPokemon) {
+// [5]  creating card             4444444444444444444444
+async function cardCreating(filterPokemon) {
   let min = maxWeb;
   if (filterPokemon.length < min) min = filterPokemon.length;
   myPokemon.innerHTML = "";
   for (let i = 0; i < min; i++) {
-    fetch(filterPokemon[i].url)
-      .then((res) => res.json())
-      .then((res) => {
-        filterPokemon[i] = {
-          ...filterPokemon[i],
-          "data-order": i,
-          order: res.order,
-          name: res.name,
-          attack: res.stats[1].base_stat,
-          defence: res.stats[2].base_stat,
-          image: res.sprites.other.home.front_default || "images/pokemon.png",
-          "sp-attack": res.stats[3].base_stat,
-          "sp-defence": res.stats[4].base_stat,
-          health: res.stats[0].base_stat,
-          exp: res.base_experience,
-          ability: [
-            res.abilities[0].ability.name,
-            res.abilities[1]?.ability.name || res.abilities[0].ability.name,
-          ],
-          types: [
-            res.types[0].type.name,
-            res.types[1]?.type.name || res.types[0].type.name,
-          ],
-        };
-        let myCard = document.createElement("div");
-        myCard.classList.add("card");
-        myCard.setAttribute("data-order", filterPokemon[i]["data-order"]);
-        myCard.style.background = colorObject[filterPokemon[i].types[0]];
-        myCard.innerHTML = `<div class="info">
+    const myFetch = async () => {
+      const res = await fetchData(filterPokemon[i].url);
+      filterPokemon[i] = {
+        ...filterPokemon[i],
+        "data-order": i,
+        order: res.order,
+        name: res.name,
+        attack: res.stats[1].base_stat,
+        defence: res.stats[2].base_stat,
+        image: res.sprites.other.home.front_default || "images/pokemon.png",
+        "sp-attack": res.stats[3].base_stat,
+        "sp-defence": res.stats[4].base_stat,
+        health: res.stats[0].base_stat,
+        exp: res.base_experience,
+        ability: [
+          res.abilities[0].ability.name,
+          res.abilities[1]?.ability.name || res.abilities[0].ability.name,
+        ],
+        types: [
+          res.types[0].type.name,
+          res.types[1]?.type.name || res.types[0].type.name,
+        ],
+      };
+    };
+    await myFetch();
+    let myCard = document.createElement("div");
+    myCard.classList.add("card");
+    myCard.setAttribute("data-order", filterPokemon[i]["data-order"]);
+    myCard.style.background = colorObject[filterPokemon[i].types[0]];
+
+    myCard.innerHTML = `<div class="info">
               <div class="name">${filterPokemon[i].name}</div>
               <div class="states">
                 <div class="state">
                   <div class="power att">${filterPokemon[i].attack}</div>
                   <div class="power-type">Attack</div>
-                </div>
+                  </div>
                 <div class="state">
                   <div class="power def">${filterPokemon[i].defence}</div>
                   <div class="power-type">Defense</div>
-                </div>
+                  </div>
               </div>
               <div class="spells">
                 <span>${filterPokemon[i].types[0]}</span>
@@ -156,16 +163,16 @@ function cardCreating(filterPokemon) {
 
             </div>
             <div class="image-poke">
-              <img src=${filterPokemon[i].image} alt="pokemon" />
+            <img src=${filterPokemon[i].image} alt="pokemon" />
             </div>`;
-        myPokemon.appendChild(myCard);
-        myCard.addEventListener("click", (e) => {
-          myShowMonster.classList.add("show");
-          myScreen.classList.add("blank");
-          handleShowMonster(e.currentTarget.getAttribute("data-order"));
-        });
-      });
+    myPokemon.appendChild(myCard);
+    myCard.addEventListener("click", (e) => {
+      myShowMonster.classList.add("show");
+      myScreen.classList.add("blank");
+      handleShowMonster(e.currentTarget.getAttribute("data-order"));
+    });
   }
+
   if (min === 0) {
     let notFoundSpan = document.createElement("span");
     myPokemon.appendChild(notFoundSpan);
@@ -176,9 +183,8 @@ function cardCreating(filterPokemon) {
 // *******************************************************
 // *******************************************************
 
-// [5] function handleShowMonster
+// [6] function handleShowMonster
 function handleShowMonster(index) {
-  console.log(filterPokemon);
   myShowMonster.innerHTML = `
         <div class="close"></div>
         <div class="image-side">
@@ -212,12 +218,12 @@ function handleShowMonster(index) {
             <div class="hp">
               <div class="hp-title">Healthy Points</div>
               <div class="hp-number">${filterPokemon[index].health}</div>
-              <div class="hp-bar"></div>
+              <div class="hp-bar"><span></span></div>
             </div>
             <div class="exp">
               <div class="exp-title">Experience</div>
               <div class="exp-number">${filterPokemon[index].exp}</div>
-              <div class="exp-bar"></div>
+              <div class="exp-bar"><span></span></div>
             </div>
           </div>
           <div class="all-stats">
@@ -243,19 +249,15 @@ function handleShowMonster(index) {
             </div>
           </div>
         </div>`;
+  let hpWidth = filterPokemon[index].health;
+  let expWidth = filterPokemon[index].exp / 2;
+  if (hpWidth > 100) hpWidth = 100;
+  if (expWidth > 100) expWidth = 100;
+  document.querySelector(".hp-bar span").style.width = `${hpWidth}%`;
+  document.querySelector(".exp-bar span").style.width = `${expWidth}%`;
+
   document.querySelector(".close").addEventListener("click", () => {
     myShowMonster.classList.remove("show");
     myScreen.classList.remove("blank");
   });
 }
-
-fetch("https://pokeapi.co/api/v2/type/3") // type
-  .then((res) => res.json())
-  .then((res) => {
-    console.log(res);
-  });
-fetch("https://pokeapi.co/api/v2/pokemon/11/")
-  .then((res) => res.json())
-  .then((res) => {
-    console.log(res);
-  });
